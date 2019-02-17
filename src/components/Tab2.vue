@@ -1,0 +1,472 @@
+<template>
+    <div class="tab2">
+        <h3>样本列表</h3>
+        <el-row :gutter="20">
+            <el-col :span="8">
+                <div class="example">
+                    <p class="title">样本总量</p>
+                    <span class="intro">{{example.allAmount}}</span>
+                    <img src="~@/assets/bot_09_chart01.png" alt="">
+                </div>
+            </el-col>
+            <el-col :span="8">
+                <div class="example">
+                    <p class="title">测试样本</p>
+                    <span class="intro">{{example.test}}</span>
+                    <img src="~@/assets/bot_09_chart02.png" alt="">
+                </div>
+            </el-col>
+            <el-col :span="8">
+                <div class="example">
+                    <p class="title">训练样本 <button @click="publish">发布</button></p>
+                    <span class="intro">{{example.train}}</span>
+                    <img src="~@/assets/bot_09_chart03.png" alt="">
+                </div>
+            </el-col>
+        </el-row>
+        <el-row :gutter="20" class="mgtp20">
+            <el-col :span="24">
+                <div class="tablepanel">
+                    <div class="oprate">
+                        <el-upload
+                            style="margin-right:10px;display: inline-block;"
+                            action="https://jsonplaceholder.typicode.com/posts/"
+                            :on-preview="handlePreview"
+                            multiple
+                            :limit="3"
+                            :on-exceed="handleExceed"
+                            :before-upload="beforeAvatarUpload"
+                            :show-file-list="false"
+                            >
+                            <el-button type="primary">导入</el-button>
+                        </el-upload>
+                        <el-button type="success" @click="dialogVisible2 = true">新建</el-button>
+                        <el-button type="danger" @click="multiDelete">删除</el-button>
+                        <el-button type="warning">评分</el-button>
+                        <el-select v-model="selectValue" style="margin-left: 20px;" placeholder="请选择意图">
+                            <el-option
+                            v-for="item in intentOption"
+                            :key="item.index"
+                            :value="item">
+                            </el-option>
+                        </el-select>
+                        <el-input
+                            placeholder="搜索样本"
+                            suffix-icon="el-icon-search"
+                            class="searchword"
+                            v-model="searchword">
+                        </el-input>
+                    </div>
+                    <el-table
+                        :data="tableData"
+                        border
+                        class="tablelist"
+                        @selection-change="handleSelectionChange"
+                        >
+                        <el-table-column
+                        type="selection"
+                        width="55">
+                        </el-table-column>
+                        <el-table-column
+                        prop="id"
+                        label="序号"
+                        width="80">
+                        </el-table-column>
+                        <el-table-column
+                        prop="type"
+                        label="类型"
+                        width="80">
+                        </el-table-column>
+                        <el-table-column
+                        prop="content"
+                        width="400"
+                        label="内容">
+                        </el-table-column>
+                        <el-table-column
+                        prop="intent"
+                        label="意图"
+                        width="80">
+                        </el-table-column>
+                        <el-table-column
+                        prop="mark"
+                        label="评分"
+                        width="80">
+                        </el-table-column>
+                        <el-table-column
+                        prop="time"
+                        label="上传时间"
+                        width="180">
+                        </el-table-column>
+                        <el-table-column label="操作">
+                        <template slot-scope="scope">
+                            <el-button
+                            size="mini"
+                            type="text"
+                            @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+                            |
+                            <el-button
+                            size="mini"
+                            type="text"
+                            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                        </template>
+                        </el-table-column>
+                    </el-table>
+                    <el-pagination
+                    class="mgtp20"
+                    layout="prev, pager, next"
+                    prev-text="上一页"
+                    next-text="下一页"
+                    :total="1000">
+                    </el-pagination>
+                </div>
+            </el-col>
+        </el-row>
+        <el-dialog
+        title="新增样本"
+        :visible.sync="dialogVisible2"
+        :before-close="handleClose2"
+        width="40%" class="dialog-box">
+        <el-form :model="ruleForm2" :rules="rules2" ref="ruleForm2" label-width="50px" class="demo-ruleForm2">
+            <el-form-item label="类型" prop="type">
+                <el-select v-model="ruleForm2.type" placeholder="请选择样本类型">
+                            <el-option
+                            v-for="item in typeOption"
+                            :key="item.index"
+                            :value="item">
+                            </el-option>
+                        </el-select>
+            </el-form-item>
+            <el-form-item label="意图" prop="intent">
+                <el-select v-model="ruleForm2.intent" placeholder="请选择样本意图">
+                            <el-option
+                            v-for="item in intentOption"
+                            :key="item.index"
+                            :value="item">
+                            </el-option>
+                        </el-select>
+            </el-form-item>
+                <el-form-item  class="mgtp20" label="内容" prop="content">
+                    <el-input type="textarea" v-model="ruleForm2.content" placeholder="请输入样本内容" class="content"></el-input>
+                    <span>{{ruleForm2.content.length}}/200</span>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm('ruleForm2')" class="mgtp20">保存</el-button>
+                </el-form-item>
+            </el-form>
+        </el-dialog>
+        <el-dialog
+        :visible.sync="publishPop"
+        width="30%" class="publish-box">
+            <div style="text-align:center">
+                <img src="~@/assets/bot_12_success.png" alt="">
+                <p>发布成功</p>
+                <el-button type="primary" class="popClose" @click="publishPop = false">确定</el-button>
+            </div>
+        </el-dialog>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'tab2',
+    data () {
+        return {
+            dialogVisible2:false,
+            publishPop:false,
+            example:{
+                allAmount:'8888',
+                test:'222',
+                train:'6666'
+            },
+            typeOption:['测试', '训练'],
+            intentOption:['请假', '申请电脑'],
+            selectValue: '',
+            searchword: '',
+            tableData: [{
+                id:'1',
+                type:'测试',
+                content:'我是实习生，我要申请更换电脑',
+                intent: '申请电脑',
+                mark: '0.99',
+                time:'2018-12-23  18:00'
+            }, {
+                id:'2',
+                type:'测试',
+                content:'我是实习生，我要申请更换电脑',
+                intent: '申请电脑',
+                mark: '0.99',
+                time:'2018-12-23  18:00'
+            }, {
+                id:'3',
+                type:'测试',
+                content:'我是实习生，我要申请更换电脑',
+                intent: '申请电脑',
+                mark: '0.99',
+                time:'2018-12-23  18:00'
+            }, {
+                id:'4',
+                type:'测试',
+                content:'我是实习生，我要申请更换电脑',
+                intent: '申请电脑',
+                mark: '0.99',
+                time:'2018-12-23  18:00'
+            }],
+            ruleForm2: {
+                id:'',
+                type: '',
+                intent:'',
+                content: '',
+                mark:'',
+                time:''
+            },
+            rules2: {
+                type: [
+                    { required: true, trigger: 'blur', message: '请选择类型' }
+                ],
+                intent: [
+                    { required: true, trigger: 'blur', message: '请选择意图' }
+                ],
+                content: [
+                    { required: true, message: '请输入样本内容', trigger: 'blur' },
+                    { min: 0, max: 200, message: '长度在200个字以内', trigger: 'blur' }
+                ]
+            },
+            editType:'add',
+            editIndex:0,
+            multipleSelection: []
+        }
+    },
+    methods:{
+        submitForm(formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    if (this.editType === 'add') {
+                        this.ruleForm2.id = '5'
+                        this.ruleForm2.mark = '0.9'
+                        this.ruleForm2.time = '2019-1-1'
+                        this.tableData.push(this.ruleForm2)
+                    } else {
+                        this.tableData.splice(this.editIndex, 1, this.ruleForm2)
+                    }
+                    this.dialogVisible2 = false
+                } else {
+                    return false
+                }
+            })
+        },
+        handleEdit(index, row) {
+            this.editType = 'edit'
+            this.ruleForm2 = {
+                id:row.id,
+                type: row.type,
+                intent:row.intent,
+                content: row.content,
+                mark:row.mark,
+                time:row.time
+            }
+            this.editIndex = index
+            this.dialogVisible2 = true
+        },
+        handleDelete(index, row) {
+            this.$confirm('确定删除此条意图')
+                .then(_ => {
+                    this.tableData.splice(index, 1)
+                })
+            console.log(index, row)
+        },
+        multiDelete() {
+            this.$confirm('确定删除' + this.multipleSelection.length + '条意图')
+                .then(_ => {
+                    this.tableData = []
+                })
+        },
+        handleClose2() {
+            this.editType = 'add'
+            this.ruleForm2 = {
+                id:'',
+                type: '',
+                intent:'',
+                content: '',
+                mark:'',
+                time:''
+            }
+            this.dialogVisible2 = false
+        },
+        publish() {
+            this.publishPop = true
+        },
+        handleSelectionChange(val) {
+            this.multipleSelection = val
+        },
+        handlePreview(file) {
+            console.log(file)
+        },
+        beforeAvatarUpload(file) {
+            const isLt2M = file.size / 1024 / 1024 < 2
+            if (!isLt2M) {
+                this.$message.error('上传头像图片大小不能超过 2MB!')
+            }
+            return isLt2M
+        },
+        handleExceed(files, fileList) {
+            this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+        }
+    }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style lang="scss">
+.tab2{
+        .publish-box{
+            .el-dialog__title{
+                display: none;
+            }
+
+            .popClose{
+                width: 180px;
+                margin-top: 20px;
+            }
+        }
+        .dialog-box{
+        .el-dialog__header{
+            margin: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid #eee;
+
+            .el-dialog__title{
+                border-left: 3px solid #4693FF;
+                padding-left: 10px;
+                height: 20px;
+                display: block;
+                line-height: 20px;
+            }
+        }
+        .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label{
+            font-weight: bold;
+        }
+        .el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before{
+            content: '';
+        }
+
+        .el-input__inner{
+            border-color:transparent;
+            background: #F1F2F7;
+        }
+        .content textarea{
+            border-color:transparent;
+            background: #F1F2F7;
+            resize: none;
+            height: 200px;
+        }
+        .content+span{
+            position: absolute;
+            top: 160px;
+            right: 15px;
+            color: #999;
+        }
+    }
+
+    .example{
+        background: #fff;
+        border-radius: 5px;
+        padding: 20px;
+
+        &:after{
+            content: '';
+            clear: both;
+            display: block;
+        }
+
+        span{
+            font-size: 36px;
+            font-weight: bold;
+            display: inline-block;
+            padding-top: 40px;
+        }
+        img{
+            float: right;
+        }
+        button{
+            width:60px;
+            height:30px;
+            background:linear-gradient(0deg,rgba(70,189,233,1),rgba(70,147,255,1));
+            box-shadow:0px 2px 6px 0px rgba(96,144,210,0.05);
+            border-radius: 5px;
+            position: absolute;
+            margin-left: 5px;
+            top: 16px;
+        }
+    }
+
+    .tablepanel{
+        margin-top:10px;
+        background: #fff;
+        border-radius: 5px;
+        padding: 20px;
+
+        .el-upload-list{
+            display: none;
+        }
+        .searchword{
+            width: 240px;
+            float: right;
+
+            input {
+                border:none;
+                background: #F1F2F7;
+            }
+        }
+
+        .el-table td, .el-table th{
+            text-align:center;
+        }
+
+        .tablelist{
+            width: 100%;
+            margin-top:30px;
+            color: #333;
+
+            .el-button{
+                color: #666666;
+            }
+            .el-button+.el-button{
+                margin-left: 0;
+            }
+
+            th{
+                font-weight: bold;
+                color: #333;
+            }
+        }
+
+        .el-pagination{
+            text-align: center;
+
+            button{
+                border: 1px solid #d9d9d9;
+                border-radius: 5px;
+                margin: 5px;
+                line-height: 2;
+                padding: 0 12px;
+            }
+            .number{
+                background: white;
+                border: 1px solid #d9d9d9;
+                border-radius: 5px;
+                margin: 5px;
+                line-height: 2;
+                color: #666666;
+            }
+            .number.active{
+                background: #4693FF;
+                color: #fff;
+                border: 1px solid #4693FF;
+            }
+            .el-icon-more{
+                margin: 5px;
+            }
+        }
+    }
+}
+</style>
