@@ -180,9 +180,9 @@ export default {
             dialogVisible2:false,
             publishPop:false,
             example:{
-                allAmount:'8888',
-                test:'222',
-                train:'6666'
+                allAmount:0,
+                test:0,
+                train:0
             },
             typeOption:['测试', '训练'],
             intentOption:['开通权限', '考核时间', '忘记', '重装', 'IVA丢失', '修改', '考核标准', '同步', '添加'],
@@ -285,6 +285,11 @@ export default {
                 this.$message.error('上传头像图片大小不能超过 2MB!')
             }
             this.importData = tableData
+            this.example = {
+                allAmount:tableData.length,
+                test:0,
+                train:tableData.length
+            }
             return isLt2M
         },
         handleExceed(files, fileList) {
@@ -292,6 +297,11 @@ export default {
         },
         selectIntent(name) {
             this.importData = []
+            this.example = {
+                allAmount:tableData.length,
+                test:0,
+                train:tableData.length
+            }
             tableData.forEach(element => {
                 if (element.intent === name) {
                     this.importData.push(element)
