@@ -48,6 +48,7 @@ export default {
     methods:{
         next() {
             if (this.name === 'admin' && this.password === 'admin') {
+                sessionStorage.setItem('name', 'admin')
                 this.$router.push('/')
             } else {
                 this.txtToast = '请输入正确的用户名和密码'

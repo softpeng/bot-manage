@@ -14,7 +14,8 @@ const ROUTER = new Router({
             name: 'index',
             component: require('@/pages/Index').default,
             meta: {
-                title: 'bot后台-首页'
+                title: 'bot后台-首页',
+                isFree: false
             }
         },
         {
@@ -22,7 +23,8 @@ const ROUTER = new Router({
             name: 'login',
             component: require('@/pages/Login').default,
             meta: {
-                title: 'bot后台-登录'
+                title: 'bot后台-登录',
+                isFree: true
             }
         }]
 })
@@ -33,8 +35,11 @@ ROUTER.beforeEach((to, from, next) => {
 })
 
 ROUTER.afterEach((to, from) => {
-    const { title } = to.meta
+    const { title, isFree } = to.meta
     document.title = title || 'bot'
+    if (!isFree && !sessionStorage.name) {
+        ROUTER.push({name:'login'})
+    }
 })
 
 // ROUTER.responseErrorHandler = responseErrorHandler

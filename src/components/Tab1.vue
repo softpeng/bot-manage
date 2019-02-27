@@ -59,52 +59,58 @@ export default {
         return {
             dialogVisible: false,
             intentionList:[{
-                title:'申请电脑',
-                intro:'处理有关电脑申请、审批、回收、上门服务等流程'
+                title:'开通权限',
+                intro:'处理有关权限等流程'
             }, {
-                title:'请假',
-                intro:'关于请假等需求'
+                title:'考核时间',
+                intro:'关于考核时间等知识'
             }, {
-                title:'设备',
-                intro:'关于设备领用等流程'
+                title:'忘记',
+                intro:'信息遗忘'
             }, {
-                title:'报销',
-                intro:'关于报销流程及入账通知'
+                title:'重装',
+                intro:'关于重装'
             }, {
-                title:'SKU',
-                intro:'企业产品'
+                title:'IVA丢失',
+                intro:'关于IVA丢失的处理方式'
             }, {
-                title:'出差',
-                intro:'了解出差标准制度'
+                title:'修改',
+                intro:'关于修改信息'
             }, {
-                title:'会议室',
-                intro:'会议室查询预定'
+                title:'考核标准',
+                intro:'关于考核标准'
+            }, {
+                title:'同步',
+                intro:'信息同步'
+            }, {
+                title:'添加',
+                intro:'信息添加方式'
             }],
             color:['#2BCCC0', '#FE7156', '#4693FF', '#F9C22D', '#24BEE3', '#5FCC7C', '#FB8421'],
             eventList:[{
                 headImg:require('@/assets/headimg.jpg'),
-                name:'林东东',
-                place:'Vaave',
-                event:'3个意图',
-                time:'9:53'
+                name:'Admin',
+                place:'开通权限',
+                event:'10条训练样本',
+                time:'刚刚'
             }, {
                 headImg:require('@/assets/headimg.jpg'),
-                name:'朱老师',
-                place:'HR',
-                event:'2个意图',
-                time:'1月30日'
+                name:'Admin',
+                place:'考核时间',
+                event:'12个训练样本',
+                time:'刚刚'
             }, {
                 headImg:require('@/assets/headimg.jpg'),
-                name:'附小小',
-                place:'设备',
+                name:'Admin',
+                place:'忘记',
                 event:'20条样本',
-                time:'1月29日'
+                time:'刚刚'
             }, {
                 headImg:require('@/assets/headimg.jpg'),
-                name:'周毛毛',
-                place:'出差',
-                event:'100条训练样本',
-                time:'2018年12月12日'
+                name:'Admin',
+                place:'考核标准',
+                event:'30条训练样本',
+                time:'刚刚'
             }],
             ruleForm: {
                 title: '',
