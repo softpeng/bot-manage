@@ -17,7 +17,8 @@ import { Button,
     Table,
     TableColumn,
     Pagination,
-    Upload
+    Upload,
+    Checkbox
 } from 'element-ui'
 import App from './App'
 import router from './router'
@@ -39,6 +40,7 @@ Vue.use(Table)
 Vue.use(TableColumn)
 Vue.use(Pagination)
 Vue.use(Upload)
+Vue.use(Checkbox)
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$alert = MessageBox.alert
 Vue.prototype.$confirm = MessageBox.confirm
