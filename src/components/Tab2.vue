@@ -43,7 +43,7 @@
                         <el-button type="success" @click="dialogVisible2 = true">新建</el-button>
                         <el-button type="danger" @click="multiDelete">删除</el-button>
                         <el-button type="warning">评分</el-button>
-                        <el-select v-model="selectValue" style="margin-left: 20px;" placeholder="请选择意图">
+                        <el-select v-model="selectValue" @change="selectIntent" style="margin-left: 20px;" placeholder="请选择意图">
                             <el-option
                             v-for="item in intentOption"
                             :key="item.index"
@@ -58,7 +58,7 @@
                         </el-input>
                     </div>
                     <el-table
-                        :data="tableData"
+                        :data="importData"
                         border
                         class="tablelist"
                         @selection-change="handleSelectionChange"
@@ -79,7 +79,7 @@
                         </el-table-column>
                         <el-table-column
                         prop="content"
-                        width="400"
+                        width="420"
                         label="内容">
                         </el-table-column>
                         <el-table-column
@@ -93,10 +93,15 @@
                         width="80">
                         </el-table-column>
                         <el-table-column
+                        prop="result"
+                        label="预期结果"
+                        width="80">
+                        </el-table-column>
+                        <!-- <el-table-column
                         prop="time"
                         label="上传时间"
                         width="180">
-                        </el-table-column>
+                        </el-table-column> -->
                         <el-table-column label="操作">
                         <template slot-scope="scope">
                             <el-button
@@ -167,6 +172,7 @@
 </template>
 
 <script>
+import { tableData } from '@/components/tableData'
 export default {
     name: 'tab2',
     data () {
@@ -179,38 +185,10 @@ export default {
                 train:'6666'
             },
             typeOption:['测试', '训练'],
-            intentOption:['请假', '申请电脑'],
+            intentOption:['开通权限', '考核时间', '忘记', '重装', 'IVA丢失', '修改', '考核标准', '同步', '添加'],
             selectValue: '',
             searchword: '',
-            tableData: [{
-                id:'1',
-                type:'测试',
-                content:'我是实习生，我要申请更换电脑',
-                intent: '申请电脑',
-                mark: '0.99',
-                time:'2018-12-23  18:00'
-            }, {
-                id:'2',
-                type:'测试',
-                content:'我是实习生，我要申请更换电脑',
-                intent: '申请电脑',
-                mark: '0.99',
-                time:'2018-12-23  18:00'
-            }, {
-                id:'3',
-                type:'测试',
-                content:'我是实习生，我要申请更换电脑',
-                intent: '申请电脑',
-                mark: '0.99',
-                time:'2018-12-23  18:00'
-            }, {
-                id:'4',
-                type:'测试',
-                content:'我是实习生，我要申请更换电脑',
-                intent: '申请电脑',
-                mark: '0.99',
-                time:'2018-12-23  18:00'
-            }],
+            importData:[],
             ruleForm2: {
                 id:'',
                 type: '',
@@ -244,9 +222,9 @@ export default {
                         this.ruleForm2.id = '5'
                         this.ruleForm2.mark = '0.9'
                         this.ruleForm2.time = '2019-1-1'
-                        this.tableData.push(this.ruleForm2)
+                        this.importData.push(this.ruleForm2)
                     } else {
-                        this.tableData.splice(this.editIndex, 1, this.ruleForm2)
+                        this.importData.splice(this.editIndex, 1, this.ruleForm2)
                     }
                     this.dialogVisible2 = false
                 } else {
@@ -270,14 +248,14 @@ export default {
         handleDelete(index, row) {
             this.$confirm('确定删除此条意图')
                 .then(_ => {
-                    this.tableData.splice(index, 1)
+                    this.importData.splice(index, 1)
                 })
             console.log(index, row)
         },
         multiDelete() {
             this.$confirm('确定删除' + this.multipleSelection.length + '条意图')
                 .then(_ => {
-                    this.tableData = []
+                    this.importData = []
                 })
         },
         handleClose2() {
@@ -306,10 +284,19 @@ export default {
             if (!isLt2M) {
                 this.$message.error('上传头像图片大小不能超过 2MB!')
             }
+            this.importData = tableData
             return isLt2M
         },
         handleExceed(files, fileList) {
             this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`)
+        },
+        selectIntent(name) {
+            this.importData = []
+            tableData.forEach(element => {
+                if (element.intent === name) {
+                    this.importData.push(element)
+                }
+            })
         }
     }
 }

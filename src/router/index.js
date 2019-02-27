@@ -16,6 +16,14 @@ const ROUTER = new Router({
             meta: {
                 title: 'bot后台-首页'
             }
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: require('@/pages/Login').default,
+            meta: {
+                title: 'bot后台-登录'
+            }
         }]
 })
 
